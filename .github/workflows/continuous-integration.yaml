@@ -24,9 +24,8 @@ jobs:
           go build -o product-catalog main.go
 
       - name: Run the unit testing
-        with:
-          working-directory: cd /product-catalog
         run: |
+          cd /product-catalog
           go test ./...
 
   code-quality:
