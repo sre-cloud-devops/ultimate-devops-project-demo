@@ -23,6 +23,7 @@ jobs:
       - name: Run the binary file and get the Builds
         run: |
           cd src/product-catalog
+          go mod tidy
           go mod dowload
           go build -o product-catalog main.go
 
