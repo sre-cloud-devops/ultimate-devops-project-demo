@@ -64,7 +64,7 @@ jobs:
         uses: docker/login-action@v3
         with:
           docker_username: ${{secrets.DOCKER_USERNAME}}
-          docker_token: ${{secrets.DOCKER_TOKEN}}
+          docker_password: ${{secrets.DOCKER_PASSWORD}}
 
       - name: Push the docker image to docker hub
         uses: docker/build-push-action@v6
