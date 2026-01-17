@@ -1,5 +1,4 @@
-name: product-catalog-service
-
+name: product-catalog-service CI Pipeline
 on:
   push:
     branches:
