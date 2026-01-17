@@ -1,6 +1,9 @@
 name: product-catalog-service
 
 on:
+  push:
+    branches:
+      - main
   pull_request:
     branches:
       - main
