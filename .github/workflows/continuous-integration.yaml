@@ -1,0 +1,94 @@
+name: product-catalog-service
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout-code
+        uses: actions/checkout@v4
+
+      - name: Setup Go in the runner
+        uses: actions/setup-go@v6
+        with:
+          go-version: stable
+
+      - name: Run the binary file and get the Builds
+        run: |
+          cd /product-catalog
+          go mod dowload
+          go build -o product-catalog main.go
+
+      - name: Run the unit testing
+        with:
+          working-directory: cd /product-catalog
+        run: |
+          go test ./...
+
+  code-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout-code
+        uses: actions/checkout@v4
+
+      - name: Setup GO in the runner
+        uses: actions/setup-go@v6
+        with:
+          go-version: stable
+
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: v1.55.2
+          run: golangci-lint run
+          working-directory: src/product-catalog
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Docker login
+        uses: docker/setup-docker-action@v2
+
+      - name: Login to Docker
+        uses: docker/login-action@v3
+        with:
+          docker_username: ${{secrets.DOCKER_USERNAME}}
+          docker_token: ${{secrets.DOCKER_TOKEN}}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Push the docker image to docker hub
+        uses: docker/build-push-action@v6
+        with:
+          context: src/product-catalog
+          file: Dockerfile
+          push: true
+          tags: ${{secrets.DOCKER_USERNAME}}/product-catalog/${{github.run_id}}:latest
+
+  update-k8s-manifest-file:
+    runs-on: ubuntu-latest
+    needs: docker
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Update the k8s manifest file with the docker image from previous step
+        run: |
+          sed -i "s|image: *|image: ${{secrets.DOCKER_USERNAME}}/product-catalog/${{github.run_id}}:latest}}" kubernetes/productcatalog/deploy.yaml
+
+            - name: Commit and push changes
+
+      - name: Commit and Push the code to update the manifest with new docker image
+        run: |
+          git config --global user.email "srewithdevops@outlook.com"
+          git config --global user.name "Ameerkhan"
+          git add kubernetes/productcatalog/deploy.yaml
+          git commit -m "Building the CI pipeline using Github actions"
+          git push origin main
