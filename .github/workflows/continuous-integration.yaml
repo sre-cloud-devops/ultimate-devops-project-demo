@@ -90,7 +90,7 @@ jobs:
       - name: Commit and Push the code to update the manifest with new docker image
         run: |
           git config --global user.email "srewithdevops@outlook.com"
-          git config --global user.name "Ameerkhan"
+          git config --global user.name "sre-cloud-devops"
           git add kubernetes/productcatalog/deploy.yaml
           git commit -m "Building the CI pipeline using Github actions"
           git push origin main
