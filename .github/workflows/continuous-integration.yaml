@@ -1,4 +1,4 @@
-# Create a CI pipeline for the product-catalog-service
+#Create a CI pipeline for the product-catalog-service
 name: product-catalog-service CI Pipeline
 on:
   push:
@@ -7,7 +7,9 @@ on:
   pull_request:
     branches:
       - main
+      
 # Create multiple jobs for building, testing, code-quality, docker image creation and pushing to docker hub, updating k8s manifest file
+
 jobs:
   build:
     if: ${{false}} # Temporarily disabled
