@@ -10,6 +10,7 @@ on:
 # Create multiple jobs for building, testing, code-quality, docker image creation and pushing to docker hub, updating k8s manifest file
 jobs:
   build:
+    if: ${{false}} # Temporarily disabled
     runs-on: ubuntu-latest
     steps:
       - name: checkout-code
@@ -50,6 +51,7 @@ jobs:
           run: golangci-lint run
           working-directory: src/product-catalog
   docker:
+    if: ${{false}} # Temporarily disabled
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -76,6 +78,7 @@ jobs:
           tags: ${{ secrets.DOCKER_USERNAME }}/product-catalog:${{github.run_id}}
 
   update-k8s-manifest-file:
+    if: ${{false}} # Temporarily disabled
     runs-on: ubuntu-latest
     needs: docker
     steps:
