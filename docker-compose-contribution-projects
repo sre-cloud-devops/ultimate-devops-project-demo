@@ -1,0 +1,41 @@
+Looking at this `docker-compose.yml` file from the OpenTelemetry demo project, I can help clarify who should set these environment variables.
+
+## Environment Variables - Who Sets Them?
+
+### **DevOps Engineers** should define/manage:
+1. **Infrastructure & Deployment Variables**
+   - `OTEL_COLLECTOR_HOST`, `OTEL_COLLECTOR_PORT_HTTP`, `OTEL_COLLECTOR_PORT_GRPC`
+   - `KAFKA_HOST`, `KAFKA_ADDR`
+   - `POSTGRES_HOST`, `POSTGRES_PORT`, `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`
+   - `VALKEY_ADDR`, `VALKEY_PORT`
+   - `JAEGER_HOST`, `JAEGER_UI_PORT`, `JAEGER_GRPC_PORT`
+   - `GRAFANA_HOST`, `GRAFANA_PORT`
+   - `PROMETHEUS_ADDR`, `PROMETHEUS_PORT`
+   - `FLAGD_HOST`, `FLAGD_PORT`, `FLAGD_OFREP_PORT`, `FLAGD_UI_HOST`, `FLAGD_UI_PORT`
+   - `IMAGE_NAME`, `DEMO_VERSION`, `IMAGE_VERSION` (image registry/versions)
+   - `ENVOY_PORT`, `ENVOY_ADMIN_PORT`, `ENVOY_ADDR`
+   - `HOST_FILESYSTEM`, `DOCKER_SOCK` (volume paths)
+
+2. **Resource Limits & Performance**
+   - Memory limits are defined in `deploy.resources.limits`
+
+### **Developers** should define:
+1. **Application-Specific Variables**
+   - `OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE` (telemetry preference)
+   - `OTEL_RESOURCE_ATTRIBUTES` (service attributes)
+   - `OTEL_SERVICE_NAME` (application identity)
+   - `OTEL_LOGS_EXPORTER`, `OTEL_PYTHON_LOG_CORRELATION`
+   - Application ports: `CART_PORT`, `CHECKOUT_PORT`, `CURRENCY_PORT`, `EMAIL_PORT`, `PAYMENT_PORT`, `PRODUCT_CATALOG_PORT`, `QUOTE_PORT`, `RECOMMENDATION_PORT`, `SHIPPING_PORT`, `AD_PORT`, `FRONTEND_PORT`, `LOCUST_WEB_PORT`, `IMAGE_PROVIDER_PORT`
+   - Feature flag configuration: `FLAGD_HOST`, `FLAGD_PORT`
+   - Database connection strings: `DB_CONNECTION_STRING`
+   - Business logic configs: `PRODUCT_CATALOG_RELOAD_INTERVAL`, `LOCUST_USERS`, `LOCUST_HEADLESS`, `LOCUST_AUTOSTART`
+
+### **Shared Responsibility** (Both):
+- `.env` file creation and management
+- Dockerfile paths variables (`ACCOUNTING_DOCKERFILE`, `AD_DOCKERFILE`, etc.)
+- Build-time arguments (`OTEL_JAVA_AGENT_VERSION`, `OPENTELEMETRY_CPP_VERSION`)
+
+## Best Practice:
+Create an `.env.example` file documenting all variables, then have:
+- **DevOps** create `.env` for their infrastructure values
+- **Developers** provide defaults/documentation for application variables
